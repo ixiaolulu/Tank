@@ -8,6 +8,7 @@ import java.awt.*;
  * @Date: 2020-06-01 22:07
  */
 public class Bullet {
+
     private static final int SPEED = 5;
 
     private static final int WIDTH = 30, HEIGHT = 30;
@@ -18,13 +19,21 @@ public class Bullet {
 
     private boolean moving = false;
 
-    public Bullet(int x, int y, Dir dir) {
+    private boolean live = true;
+
+    private TankFrame tf = null;
+
+    public Bullet(int x, int y, Dir dir,TankFrame tf) {
         this.x = x;
         this.y = y;
         this.dir = dir;
+        this.tf = tf;
     }
 
     public void paint(Graphics g) {
+        if(!live){
+           tf.bullets.remove(this) ;
+        }
         Color c = g.getColor();
         g.setColor(Color.RED);
         g.fillOval(x, y, WIDTH, HEIGHT);
@@ -49,6 +58,7 @@ public class Bullet {
             default:
                 break;
         }
+        if(this.x < 0 || this.y<0 || this.x>TankFrame.GAME_WIDTH || this.y>TankFrame.GAME_HEIGHT) live = false;
     }
 
     public int getX() {
@@ -81,5 +91,21 @@ public class Bullet {
 
     public void setMoving(boolean moving) {
         this.moving = moving;
+    }
+
+    public boolean isLive() {
+        return live;
+    }
+
+    public void setLive(boolean live) {
+        this.live = live;
+    }
+
+    public TankFrame getTf() {
+        return tf;
+    }
+
+    public void setTf(TankFrame tf) {
+        this.tf = tf;
     }
 }
