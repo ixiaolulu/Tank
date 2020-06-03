@@ -7,11 +7,16 @@ package com.lulu.tank;
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-      TankFrame frame = new TankFrame();
+        TankFrame frame = new TankFrame();
 
-      while(true){
-          Thread.sleep(50);
-          frame.repaint();
-      }
+        for (int i = 0; i < 5; i++) {
+            Tank tank = new Tank(50 + i * 100, 200, Dir.DOWN, Group.BAD, frame);
+            frame.tanks.add(tank);
+        }
+
+        while (true) {
+            Thread.sleep(50);
+            frame.repaint();
+        }
     }
 }

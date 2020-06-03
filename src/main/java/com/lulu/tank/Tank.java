@@ -1,6 +1,7 @@
 package com.lulu.tank;
 
 import java.awt.*;
+import java.util.Random;
 
 /**
  * @Description:
@@ -11,34 +12,56 @@ public class Tank {
 
     private int x, y;
 
-    private int width = 50, height = 50;
+    public static int WIDTH = ResourceMgr.tankD.getWidth();
+    public static int HEIGHT = ResourceMgr.tankD.getHeight();
 
     private Dir dir;
 
-    private static final int SPEED = 50;
+    private static final int SPEED = 1;
 
-    private boolean moving = false;
+    private boolean moving = true;
+
+    private boolean living = true;
 
     private TankFrame tf = null;
 
-    public Tank(int x, int y, Dir dir, TankFrame tf) {
+    private Group group = Group.BAD;
+
+    private Random random = new Random();
+
+    public Tank(int x, int y, Dir dir, Group group, TankFrame tf) {
         this.x = x;
         this.y = y;
         this.dir = dir;
+        this.group = group;
         this.tf = tf;
     }
 
 
     public void paint(Graphics g) {
-        Color c = g.getColor();
-        g.setColor(Color.YELLOW);
-        g.fillRect(x, y, 50, 50);
-        g.setColor(c);
-        if (moving) move();
+        if (!living) tf.tanks.remove(this);
+        switch (dir) {
+            case LEFT:
+                g.drawImage(ResourceMgr.tankL, x, y, null);
+                break;
+            case RIGHT:
+                g.drawImage(ResourceMgr.tankR, x, y, null);
+                break;
+            case UP:
+                g.drawImage(ResourceMgr.tankU, x, y, null);
+                break;
+            case DOWN:
+                g.drawImage(ResourceMgr.tankD, x, y, null);
+                break;
+            default:
+                break;
+        }
+        move();
 
     }
 
     private void move() {
+        if (!moving) return;
         switch (dir) {
             case UP:
                 y -= SPEED;
@@ -54,11 +77,13 @@ public class Tank {
             default:
                 break;
         }
+        if(random.nextInt(10) > 8) this.fire();
     }
 
     public void fire() {
-        tf.bullets.add(new Bullet(this.x, this.y, this.dir,this.tf));
-
+        int bX = this.x + Tank.WIDTH / 2 - Bullet.WIDTH / 2;
+        int bY = this.y + Tank.HEIGHT / 2 - Bullet.HEIGHT / 2;
+        tf.bullets.add(new Bullet(bX, bY, this.dir, this.group, this.tf));
     }
 
     public int getX() {
@@ -75,22 +100,6 @@ public class Tank {
 
     public void setY(int y) {
         this.y = y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
     }
 
     public Dir getDir() {
@@ -119,5 +128,17 @@ public class Tank {
 
     public void setTf(TankFrame tf) {
         this.tf = tf;
+    }
+
+    public void die() {
+        this.living = false;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 }
