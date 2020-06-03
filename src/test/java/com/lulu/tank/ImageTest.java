@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @Description:
@@ -17,7 +18,9 @@ public class ImageTest {
 
     @Test
     public void test() throws IOException {
-        BufferedImage bi = ImageIO.read(new File(""));
+        BufferedImage bi = ImageIO.read(new File("E:/pic/1.gif"));
         Assert.assertNotNull(bi);
+        InputStream inputStream = ImageTest.class.getClassLoader().getResourceAsStream("images/0.gif");
+        Assert.assertNotNull(inputStream);
     }
 }
