@@ -9,27 +9,33 @@ import java.util.Properties;
  * @Date: 2020-06-04 21:45
  */
 public class PropertyMgr {
-    static Properties props = new Properties();
 
-    static {
-        try {
-            props.load(PropertyMgr.class.getResourceAsStream("/config"));
-        } catch (IOException e) {
-            e.printStackTrace();
+
+    public static class ProperyMgrHolder {
+
+        public static final Properties props = new Properties();
+
+        static {
+            try {
+                props.load(PropertyMgr.class.getResourceAsStream("/config"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
+
     public static String getString(String key) {
-        if (props == null) return null;
-        return (String) props.get(key);
+        if (ProperyMgrHolder.props == null) return null;
+        return (String) ProperyMgrHolder.props.get(key);
     }
 
     public static int getInt(String key) {
-        return Integer.parseInt((String) props.get(key));
+        return Integer.parseInt((String) ProperyMgrHolder.props.get(key));
     }
 
 
-    public static void main(String[] args) {
-        System.out.println(getString("initTankCount"));
+    private PropertyMgr() {
     }
+
 }
