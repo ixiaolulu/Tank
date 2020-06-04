@@ -9,7 +9,7 @@ import java.awt.*;
  */
 public class Bullet {
 
-    private static final int SPEED = 5;
+    private static final int SPEED = 10;
 
     private int x, y;
 
@@ -26,6 +26,8 @@ public class Bullet {
 
     private Group group = Group.BAD;
 
+    Rectangle rect = new Rectangle();
+
 
     public Bullet(int x, int y, Dir dir, Group group, TankFrame tf) {
         this.x = x;
@@ -33,6 +35,11 @@ public class Bullet {
         this.dir = dir;
         this.group = group;
         this.tf = tf;
+
+        rect.x = this.x;
+        rect.y = this.y;
+        rect.width = WIDTH;
+        rect.height = HEIGHT;
     }
 
     public void paint(Graphics g) {
@@ -75,16 +82,21 @@ public class Bullet {
             default:
                 break;
         }
+        //update rect
+        rect.x = this.x;
+        rect.y = this.y;
         if (this.x < 0 || this.y < 0 || this.x > TankFrame.GAME_WIDTH || this.y > TankFrame.GAME_HEIGHT) living = false;
     }
 
     public void collideWith(Tank tank) {
         if (tank.getGroup() == this.group) return;
-        Rectangle rectBullet = new Rectangle(this.x, this.y, WIDTH, HEIGHT);
         Rectangle rectTank = new Rectangle(tank.getX(), tank.getY(), Tank.WIDTH, Tank.HEIGHT);
-        if (rectBullet.intersects(rectTank)) {
+        if (this.rect.intersects(tank.rect)) {
             tank.die();
             this.die();
+            int eX = tank.getX() + Tank.WIDTH / 2 - Explode.WIDTH / 2;
+            int eY = tank.getY() + Tank.HEIGHT / 2 - Explode.HEIGHT / 2;
+            tf.explodes.add(new Explode(eX, eY, tf));
         }
     }
 
