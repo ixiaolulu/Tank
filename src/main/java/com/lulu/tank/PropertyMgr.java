@@ -11,7 +11,7 @@ import java.util.Properties;
 public class PropertyMgr {
 
 
-    public static class ProperyMgrHolder {
+    public static class PropertyMgrHolder {
 
         public static final Properties props = new Properties();
 
@@ -26,12 +26,12 @@ public class PropertyMgr {
 
 
     public static String getString(String key) {
-        if (ProperyMgrHolder.props == null) return null;
-        return (String) ProperyMgrHolder.props.get(key);
+        if (PropertyMgrHolder.props == null) return null;
+        return (String) PropertyMgrHolder.props.get(key);
     }
 
     public static int getInt(String key) {
-        return Integer.parseInt((String) ProperyMgrHolder.props.get(key));
+        return Integer.parseInt((String) PropertyMgrHolder.props.get(key));
     }
 
 
