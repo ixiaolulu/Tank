@@ -13,7 +13,7 @@ import java.util.Random;
  */
 public class Tank extends GameObject {
 
-    private int preX, preY, x, y;
+    private int preX, preY;
 
     public static int WIDTH = ResourceMgr.goodTankU.getWidth();
     public static int HEIGHT = ResourceMgr.goodTankU.getHeight();

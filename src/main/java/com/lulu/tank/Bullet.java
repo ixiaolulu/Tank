@@ -11,8 +11,6 @@ public class Bullet extends GameObject {
 
     private static final int SPEED = 10;
 
-    private int x, y;
-
     public static int WIDTH = ResourceMgr.bulletD.getWidth();
     public static int HEIGHT = ResourceMgr.bulletD.getHeight();
 
