@@ -97,18 +97,6 @@ public class Bullet extends GameObject {
         if (this.x < 0 || this.y < 0 || this.x > TankFrame.GAME_WIDTH || this.y > TankFrame.GAME_HEIGHT) living = false;
     }
 
-    public void collideWith(Tank tank) {
-        if (tank.getGroup() == this.group) return;
-        Rectangle rectTank = new Rectangle(tank.getX(), tank.getY(), Tank.WIDTH, Tank.HEIGHT);
-        if (this.rect.intersects(tank.rect)) {
-            tank.die();
-            this.die();
-            int eX = tank.getX() + Tank.WIDTH / 2 - Explode.WIDTH / 2;
-            int eY = tank.getY() + Tank.HEIGHT / 2 - Explode.HEIGHT / 2;
-            new Explode(eX, eY);
-        }
-    }
-
     public void die() {
         this.living = false;
     }

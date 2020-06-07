@@ -14,8 +14,6 @@ public class Explode extends GameObject {
 
     private int x, y;
 
-    //private boolean living = true;
-
     private int step = 0;
 
     public Explode(int x, int y) {
