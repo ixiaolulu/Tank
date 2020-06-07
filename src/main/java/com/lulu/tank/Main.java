@@ -7,19 +7,18 @@ package com.lulu.tank;
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        TankFrame frame = new TankFrame();
+        TankFrame tf = new TankFrame();
 
         int initTankCount = PropertyMgr.getInt("initTankCount");
 
         //初始化敌人坦克
         for (int i = 0; i < initTankCount; i++) {
-            Tank tank = new Tank(50 + i * 100, 200, Dir.DOWN, Group.BAD, frame);
-            frame.tanks.add(tank);
+            tf.tanks.add(tf.gf.createTank(50 + i * 100, 200, Dir.DOWN, Group.BAD, tf));
         }
 
         while (true) {
             Thread.sleep(50);
-            frame.repaint();
+            tf.repaint();
         }
     }
 }

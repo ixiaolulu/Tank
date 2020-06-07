@@ -1,22 +1,27 @@
-package com.lulu.tank;
+package com.lulu.tank.abstractfactory;
 
-import com.lulu.tank.abstractfactory.BaseBullet;
-import com.lulu.tank.abstractfactory.BaseTank;
+import com.lulu.tank.Dir;
+import com.lulu.tank.Explode;
+import com.lulu.tank.Group;
+import com.lulu.tank.ResourceMgr;
+import com.lulu.tank.Tank;
+import com.lulu.tank.TankFrame;
 
 import java.awt.*;
 
 /**
  * @Description:
  * @Author: Milo
- * @Date: 2020-06-01 22:07
+ * @Date: 2020-06-06 14:16
  */
-public class Bullet extends BaseBullet {
-
+public class RectBullet extends BaseBullet {
     private static final int SPEED = 10;
+
+    private int x, y;
+
     public static int WIDTH = ResourceMgr.bulletD.getWidth();
     public static int HEIGHT = ResourceMgr.bulletD.getHeight();
 
-    private int x, y;
     private Dir dir;
 
     private boolean moving = false;
@@ -27,10 +32,10 @@ public class Bullet extends BaseBullet {
 
     private Group group = Group.BAD;
 
-    private Rectangle rect = new Rectangle();
+    Rectangle rect = new Rectangle();
 
 
-    public Bullet(int x, int y, Dir dir, Group group, TankFrame tf) {
+    public RectBullet(int x, int y, Dir dir, Group group, TankFrame tf) {
         this.x = x;
         this.y = y;
         this.dir = dir;
@@ -50,22 +55,11 @@ public class Bullet extends BaseBullet {
         if (!living) {
             tf.bullets.remove(this);
         }
-        switch (dir) {
-            case LEFT:
-                g.drawImage(ResourceMgr.bulletL, x, y, null);
-                break;
-            case RIGHT:
-                g.drawImage(ResourceMgr.bulletR, x, y, null);
-                break;
-            case UP:
-                g.drawImage(ResourceMgr.bulletU, x, y, null);
-                break;
-            case DOWN:
-                g.drawImage(ResourceMgr.bulletD, x, y, null);
-                break;
-            default:
-                break;
-        }
+        Color c = g.getColor();
+        g.setColor(Color.YELLOW);
+        g.fillRect(x, y, 20, 20);
+        g.setColor(c);
+
         move();
 
     }
@@ -94,9 +88,8 @@ public class Bullet extends BaseBullet {
 
     @Override
     public void collideWith(BaseTank tank) {
-        if (this.group == tank.getGroup()) return;
-
-        if (rect.intersects(tank.rect)) {
+        if (tank.getGroup() == this.group) return;
+        if (this.rect.intersects(tank.rect)) {
             tank.die();
             this.die();
             int eX = tank.getX() + Tank.WIDTH / 2 - Explode.WIDTH / 2;

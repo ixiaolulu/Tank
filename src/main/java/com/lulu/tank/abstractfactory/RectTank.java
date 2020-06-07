@@ -1,6 +1,15 @@
-package com.lulu.tank;
+package com.lulu.tank.abstractfactory;
 
-import com.lulu.tank.abstractfactory.BaseTank;
+import com.lulu.tank.Audio;
+import com.lulu.tank.Bullet;
+import com.lulu.tank.DefaultFireStrategy;
+import com.lulu.tank.Dir;
+import com.lulu.tank.FireStrategy;
+import com.lulu.tank.Group;
+import com.lulu.tank.PropertyMgr;
+import com.lulu.tank.ResourceMgr;
+import com.lulu.tank.Tank;
+import com.lulu.tank.TankFrame;
 
 import java.awt.*;
 import java.util.Random;
@@ -8,10 +17,9 @@ import java.util.Random;
 /**
  * @Description:
  * @Author: Milo
- * @Date: 2020-06-01 21:40
+ * @Date: 2020-06-06 14:31
  */
-public class Tank extends BaseTank {
-
+public class RectTank extends BaseTank {
     private int x, y;
 
     public static int WIDTH = ResourceMgr.goodTankU.getWidth();
@@ -33,7 +41,7 @@ public class Tank extends BaseTank {
 
     FireStrategy fs;
 
-    public Tank(int x, int y, Dir dir, Group group, TankFrame tf) {
+    public RectTank(int x, int y, Dir dir, Group group, TankFrame tf) {
         this.x = x;
         this.y = y;
         this.dir = dir;
@@ -62,22 +70,12 @@ public class Tank extends BaseTank {
 
     public void paint(Graphics g) {
         if (!living) tf.tanks.remove(this);
-        switch (dir) {
-            case LEFT:
-                g.drawImage(this.group == Group.GOOD ? ResourceMgr.goodTankL : ResourceMgr.badTankL, x, y, null);
-                break;
-            case UP:
-                g.drawImage(this.group == Group.GOOD ? ResourceMgr.goodTankU : ResourceMgr.badTankU, x, y, null);
-                break;
-            case RIGHT:
-                g.drawImage(this.group == Group.GOOD ? ResourceMgr.goodTankR : ResourceMgr.badTankR, x, y, null);
-                break;
-            case DOWN:
-                g.drawImage(this.group == Group.GOOD ? ResourceMgr.goodTankD : ResourceMgr.badTankD, x, y, null);
-                break;
-            default:
-                break;
-        }
+
+        Color color = g.getColor();
+        g.setColor(group == Group.GOOD ? Color.RED : Color.BLUE);
+        g.fillRect(x, y, 50, 50);
+        g.setColor(color);
+
         move();
 
     }

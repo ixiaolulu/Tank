@@ -1,15 +1,17 @@
-package com.lulu.tank;
+package com.lulu.tank.abstractfactory;
 
-import com.lulu.tank.abstractfactory.BaseExplode;
+import com.lulu.tank.Audio;
+import com.lulu.tank.ResourceMgr;
+import com.lulu.tank.TankFrame;
 
 import java.awt.*;
 
 /**
  * @Description:
  * @Author: Milo
- * @Date: 2020-06-03 22:16
+ * @Date: 2020-06-06 13:44
  */
-public class Explode extends BaseExplode {
+public class RectExplode extends BaseExplode {
 
     public static int WIDTH = ResourceMgr.explodes[0].getWidth();
     public static int HEIGHT = ResourceMgr.explodes[0].getHeight();
@@ -21,7 +23,7 @@ public class Explode extends BaseExplode {
     private int step = 0;
     TankFrame tf = null;
 
-    public Explode(int x, int y, TankFrame tf) {
+    public RectExplode(int x, int y, TankFrame tf) {
         this.x = x;
         this.y = y;
         this.tf = tf;
@@ -33,12 +35,16 @@ public class Explode extends BaseExplode {
     @Override
     public void paint(Graphics g) {
 
-        g.drawImage(ResourceMgr.explodes[step++], x, y, null);
+//        g.drawImage(ResourceMgr.explodes[step++], x, y, null);
+        Color c = g.getColor();
+        g.setColor(Color.RED);
+        g.fillRect(x, y, 10 * step, 10 * step);
+        step++;
 
-        if (step >= ResourceMgr.explodes.length)
+        if (step >= 15)
             tf.explodes.remove(this);
 
+        g.setColor(c);
 
     }
-
 }

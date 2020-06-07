@@ -1,2 +1,6 @@
 #tank count initialization
 initTankCount=10
+
+#fireStrategy
+goodFS=com.lulu.tank.FourDirFireStrategy
+badFS=com.lulu.tank.DefaultFireStrategy
