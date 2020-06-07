@@ -7,7 +7,7 @@ import java.awt.*;
  * @Author: Milo
  * @Date: 2020-06-01 22:07
  */
-public class Bullet {
+public class Bullet extends GameObject {
 
     private static final int SPEED = 10;
 
@@ -22,29 +22,28 @@ public class Bullet {
 
     private boolean living = true;
 
-    private TankFrame tf = null;
-
     private Group group = Group.BAD;
 
     Rectangle rect = new Rectangle();
 
 
-    public Bullet(int x, int y, Dir dir, Group group, TankFrame tf) {
+    public Bullet(int x, int y, Dir dir, Group group) {
         this.x = x;
         this.y = y;
         this.dir = dir;
         this.group = group;
-        this.tf = tf;
 
         rect.x = this.x;
         rect.y = this.y;
         rect.width = WIDTH;
         rect.height = HEIGHT;
+
+        GameModel.getInstance().add(this);
     }
 
     public void paint(Graphics g) {
         if (!living) {
-            tf.bullets.remove(this);
+            GameModel.getInstance().remove(this);
         }
         switch (dir) {
             case LEFT:
@@ -64,6 +63,16 @@ public class Bullet {
         }
         move();
 
+    }
+
+    @Override
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
     }
 
     private void move() {
@@ -96,11 +105,11 @@ public class Bullet {
             this.die();
             int eX = tank.getX() + Tank.WIDTH / 2 - Explode.WIDTH / 2;
             int eY = tank.getY() + Tank.HEIGHT / 2 - Explode.HEIGHT / 2;
-            tf.explodes.add(new Explode(eX, eY, tf));
+            new Explode(eX, eY);
         }
     }
 
-    private void die() {
+    public void die() {
         this.living = false;
     }
 
@@ -150,5 +159,9 @@ public class Bullet {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public Rectangle getRect() {
+        return rect;
     }
 }

@@ -1,5 +1,8 @@
 package com.lulu.tank;
 
+import com.lulu.tank.strategy.DefaultFireStrategy;
+import com.lulu.tank.strategy.FireStrategy;
+
 import java.awt.*;
 import java.util.Random;
 
@@ -8,9 +11,9 @@ import java.util.Random;
  * @Author: Milo
  * @Date: 2020-06-01 21:40
  */
-public class Tank {
+public class Tank extends GameObject {
 
-    private int x, y;
+    private int preX, preY, x, y;
 
     public static int WIDTH = ResourceMgr.goodTankU.getWidth();
     public static int HEIGHT = ResourceMgr.goodTankU.getHeight();
@@ -23,30 +26,44 @@ public class Tank {
 
     private boolean living = true;
 
-    private TankFrame tf = null;
-
     private Group group = Group.BAD;
+
+    FireStrategy fs;
 
     private Random random = new Random();
 
     Rectangle rect = new Rectangle();
 
-    public Tank(int x, int y, Dir dir, Group group, TankFrame tf) {
+    public Tank(int x, int y, Dir dir, Group group) {
         this.x = x;
         this.y = y;
         this.dir = dir;
         this.group = group;
-        this.tf = tf;
 
         rect.x = this.x;
         rect.y = this.y;
         rect.width = WIDTH;
         rect.height = HEIGHT;
+
+        GameModel.getInstance().add(this);
+
+        if (group == Group.GOOD) {
+            String goodFSName = PropertyMgr.getString("goodFS");
+
+            try {
+                fs = (FireStrategy) Class.forName(goodFSName).getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            fs = new DefaultFireStrategy();
+        }
     }
 
 
     public void paint(Graphics g) {
-        if (!living) tf.tanks.remove(this);
+        if (!living) GameModel.getInstance().remove(this);
         switch (dir) {
             case LEFT:
                 g.drawImage(this.group == Group.GOOD ? ResourceMgr.goodTankL : ResourceMgr.badTankL, x, y, null);
@@ -67,7 +84,19 @@ public class Tank {
 
     }
 
+    @Override
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
+    }
+
     private void move() {
+        preX = this.x;
+        preY = this.y;
         if (!moving) return;
         switch (dir) {
             case UP:
@@ -108,11 +137,7 @@ public class Tank {
     }
 
     public void fire() {
-        int bX = this.x + Tank.WIDTH / 2 - Bullet.WIDTH / 2;
-        int bY = this.y + Tank.HEIGHT / 2 - Bullet.HEIGHT / 2;
-        tf.bullets.add(new Bullet(bX, bY, this.dir, this.group, this.tf));
-        if (this.getGroup() == Group.GOOD) new Thread(() -> new Audio("audio/tank_fire.wav").play()).start();
-
+        fs.fire(this);
     }
 
     public int getX() {
@@ -151,14 +176,6 @@ public class Tank {
         this.moving = moving;
     }
 
-    public TankFrame getTf() {
-        return tf;
-    }
-
-    public void setTf(TankFrame tf) {
-        this.tf = tf;
-    }
-
     public void die() {
         this.living = false;
     }
@@ -169,5 +186,14 @@ public class Tank {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public Rectangle getRect() {
+        return rect;
+    }
+
+    public void back() {
+        x = this.preX;
+        y = this.preY;
     }
 }
