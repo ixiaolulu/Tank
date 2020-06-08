@@ -1,9 +1,14 @@
 package com.lulu.tank;
 
+import com.lulu.tank.oberver.TankFireEvent;
+import com.lulu.tank.oberver.TankFireHandler;
+import com.lulu.tank.oberver.TankFireObserver;
 import com.lulu.tank.strategy.DefaultFireStrategy;
 import com.lulu.tank.strategy.FireStrategy;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -195,5 +200,15 @@ public class Tank extends GameObject {
     public void back() {
         x = this.preX;
         y = this.preY;
+    }
+
+    private List<TankFireObserver> observerList = Arrays.asList(new TankFireHandler());
+
+    public void handleFireKey() {
+        TankFireEvent event = new TankFireEvent(this);
+        for (TankFireObserver observer : observerList) {
+            observer.actionOnFire(event);
+        }
+
     }
 }
