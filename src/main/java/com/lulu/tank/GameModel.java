@@ -3,6 +3,14 @@ package com.lulu.tank;
 import com.lulu.tank.cor.ColliderChain;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +19,7 @@ import java.util.List;
  * @Author: Milo
  * @Date: 2020-06-07 12:13
  */
-public class GameModel {
+public class GameModel implements Serializable {
 
     private static final GameModel INSTANCE = new GameModel();
 
@@ -85,4 +93,68 @@ public class GameModel {
         this.objects.remove(go);
     }
 
+    public void save() {
+        ObjectOutputStream oos = null;
+        FileOutputStream fos = null;
+        try {
+            File file = new File("/Users/milo/workspace/Tank/tank.data");
+            fos = new FileOutputStream(file);
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(myTank);
+            oos.writeObject(objects);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (oos != null) {
+                try {
+                    oos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void load() {
+
+        ObjectInputStream ois = null;
+        FileInputStream fis = null;
+        try {
+            File file = new File("/Users/milo/workspace/Tank/tank.data");
+            fis = new FileInputStream(file);
+            ois = new ObjectInputStream(fis);
+            myTank = (Tank) ois.readObject();
+            objects = (List<GameObject>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
 }
