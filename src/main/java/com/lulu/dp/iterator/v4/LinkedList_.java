@@ -6,7 +6,7 @@ package com.lulu.dp.iterator.v4;
 /**
  *
  * @since 2020/6/12 14:26
- * @author DingXianLu
+ * @author Milo.Ding
  *
  */
 public class LinkedList_ implements Collection_ {

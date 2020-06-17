@@ -8,7 +8,7 @@ import org.omg.CORBA.Object;
 /**
  *
  * @since 2020/6/12 14:29
- * @author DingXianLu
+ * @author Milo.Ding
  *
  */
 public class ArrayList_<E> implements Collection_<E> {

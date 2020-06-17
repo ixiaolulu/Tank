@@ -6,7 +6,7 @@ package com.lulu.dp.iterator.v3;
 /**
  *
  * @since 2020/6/12 14:29
- * @author DingXianLu
+ * @author Milo.Ding
  *
  */
 public class ArrayList_ implements Collection_ {

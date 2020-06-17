@@ -6,7 +6,7 @@ package com.lulu.dp.iterator.v2;
 /**
  *
  * @since 2020/6/12 14:02
- * @author DingXianLu
+ * @author Milo.Ding
  *
  */
 public class Main {

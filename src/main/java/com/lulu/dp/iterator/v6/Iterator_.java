@@ -6,7 +6,7 @@ package com.lulu.dp.iterator.v6;
 /**
  *
  * @since 2020/6/12 15:12
- * @author DingXianLu
+ * @author Milo.Ding
  *
  */
 public interface Iterator_<E> {
