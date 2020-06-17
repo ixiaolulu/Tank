@@ -3,14 +3,15 @@
  */
 package com.lulu.dp.asm;
 
-import static jdk.internal.org.objectweb.asm.Opcodes.ASM4;
-
-import java.io.IOException;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
+
+import java.io.IOException;
+
+import static org.objectweb.asm.Opcodes.ASM4;
 
 /**
  *
