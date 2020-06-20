@@ -59,19 +59,31 @@ class ServerChildHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf buf = (ByteBuf) msg;
-        byte[] bytes = new byte[buf.readableBytes()];
-        buf.getBytes(buf.readerIndex(), bytes);
+        ByteBuf buf = null;
+        try {
+            buf = (ByteBuf) msg;
+            byte[] bytes = new byte[buf.readableBytes()];
+            buf.getBytes(buf.readerIndex(), bytes);
 
-        System.out.println(new String(bytes));
-        Server.clients.writeAndFlush(msg);
+            String s = new String(bytes);
+            if (s.equals("byebye")) {
+                System.out.println("客户端要求退出");
+                Server.clients.remove(ctx.channel());
+                ctx.close();
+            } else {
+                Server.clients.writeAndFlush(msg);
+            }
+        } finally {
+//            if (buf != null) ReferenceCountUtil.release(buf);
+        }
+
 
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         cause.printStackTrace();
-        ;
+        Server.clients.remove(ctx.channel());
         ctx.close();
     }
 }

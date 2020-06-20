@@ -3,6 +3,7 @@ package com.lulu.netty.study.v2;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,13 +20,16 @@ import io.netty.util.ReferenceCountUtil;
  * 暴露调用接口 new Client().connect();
  */
 public class Client {
+
+    private Channel channel = null;
+
     public static void main(String[] args) {
         Client client = new Client();
         client.connect();
 
     }
 
-    private void connect() {
+    public void connect() {
         EventLoopGroup group = new NioEventLoopGroup(1);
         Bootstrap b = new Bootstrap();
 
@@ -43,17 +47,32 @@ public class Client {
                         System.out.println("not connected!");
                     } else {
                         System.out.println("connected!");
+                        channel = channelFuture.channel();
                     }
                 }
             });
 
             f.sync();
+
+            f.channel().closeFuture().sync();
+            System.out.println("已经退出");
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             group.shutdownGracefully();
         }
     }
+
+    public void send(String msg) {
+        ByteBuf buf = Unpooled.copiedBuffer(msg.getBytes());
+        channel.writeAndFlush(buf);
+    }
+
+    public void closeConnect() {
+        this.send("byebye");
+    }
+
+
 }
 
 class ClientChannelInitializer extends ChannelInitializer<SocketChannel> {
@@ -79,7 +98,8 @@ class ClientHandler extends ChannelInboundHandlerAdapter {
             buf = (ByteBuf) msg;
             byte[] bytes = new byte[buf.readableBytes()];
             buf.getBytes(buf.readerIndex(), bytes);
-            System.out.println(new String(bytes));
+            String msgAccept = new String(bytes);
+            ClientFrame.INSTANCE.updateText(msgAccept);
         } finally {
             if (buf != null) ReferenceCountUtil.release(buf);
         }
