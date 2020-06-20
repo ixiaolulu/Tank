@@ -1,5 +1,7 @@
 package com.lulu.tank;
 
+import com.lulu.tank.net.Client;
+
 /**
  * @Description:
  * @Author: Milo
@@ -7,19 +9,33 @@ package com.lulu.tank;
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        TankFrame frame = new TankFrame();
+        TankFrame frame = TankFrame.INSTANCE;
+        frame.setVisible(true);
+//        int initTankCount = PropertyMgr.getInt("initTankCount");
+//
+//        //初始化敌人坦克
+//        for (int i = 0; i < initTankCount; i++) {
+//            Tank tank = new Tank(50 + i * 100, 200, Dir.DOWN, Group.BAD, frame);
+//            frame.tanks.add(tank);
+//        }
 
-        int initTankCount = PropertyMgr.getInt("initTankCount");
+//        new Thread(() -> new Audio("audio/war1.wav").loop()).start();
 
-        //初始化敌人坦克
-        for (int i = 0; i < initTankCount; i++) {
-            Tank tank = new Tank(50 + i * 100, 200, Dir.DOWN, Group.BAD, frame);
-            frame.tanks.add(tank);
-        }
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                frame.repaint();
+            }
 
-        while (true) {
-            Thread.sleep(50);
-            frame.repaint();
-        }
+        }).start();
+
+
+        Client client = Client.INSTANCE;
+        client.connect();
+
     }
 }

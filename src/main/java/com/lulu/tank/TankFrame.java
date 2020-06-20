@@ -1,12 +1,22 @@
 package com.lulu.tank;
 
+import com.lulu.tank.net.Client;
+import com.lulu.tank.net.TankDirChangedMsg;
+import com.lulu.tank.net.TankStartMovingMsg;
+import com.lulu.tank.net.TankStopMsg;
+
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * @Description:
@@ -15,18 +25,35 @@ import java.util.List;
  */
 public class TankFrame extends Frame {
 
-    static final int GAME_WIDTH = 800, GAME_HEIGHT = 600;
+    public static final TankFrame INSTANCE = new TankFrame();
 
-    Tank myTank = new Tank(200, 400, Dir.DOWN, Group.GOOD, this);
+    static final int GAME_WIDTH = 800, GAME_HEIGHT = 600;
+    Random r = new Random();
+
+    Tank myTank = new Tank(r.nextInt(GAME_WIDTH), r.nextInt(GAME_HEIGHT), Dir.DOWN, Group.GOOD, this);
     List<Explode> explodes = new ArrayList<>();
 
     List<Bullet> bullets = new ArrayList<>();
-    List<Tank> tanks = new ArrayList<>();
+
+    Map<UUID, Tank> tanks = new HashMap<>();
+
+
+    public Tank findTankByUUID(UUID id) {
+        return tanks.get(id);
+    }
+
+    public void addTank(Tank t) {
+        tanks.put(t.getId(), t);
+    }
+
+
+    public void addBullet(Bullet b) {
+        bullets.add(b);
+    }
 
     public TankFrame() {
         this.setSize(GAME_WIDTH, GAME_HEIGHT);
         this.setTitle("tank war");
-        this.setVisible(true);
         this.setResizable(false);
         this.addKeyListener(new MyKeyListener());
         this.addWindowListener(new WindowAdapter() {
@@ -47,24 +74,23 @@ public class TankFrame extends Frame {
         g.drawString("爆炸的数量：" + explodes.size(), 10, 100);
         g.setColor(c);
         myTank.paint(g);
+
         for (int i = 0; i < bullets.size(); i++) {
             bullets.get(i).paint(g);
         }
 
-        for (int i = 0; i < tanks.size(); i++) {
-            tanks.get(i).paint(g);
-        }
+        tanks.values().stream().forEach(e -> e.paint(g));
 
         for (int i = 0; i < explodes.size(); i++) {
             explodes.get(i).paint(g);
         }
 
+        Collection<Tank> values = tanks.values();
         for (int i = 0; i < bullets.size(); i++) {
-            for (int j = 0; j < tanks.size(); j++) {
-                bullets.get(i).collideWith(tanks.get(j));
+            for (Tank t : values) {
+                bullets.get(i).collideWith(t);
             }
         }
-
 
 
     }
@@ -83,6 +109,19 @@ public class TankFrame extends Frame {
         gOffScreen.setColor(c);
         paint(gOffScreen);
         g.drawImage(offScreenImage, 0, 0, null);
+    }
+
+    public Tank getMainTank() {
+        return myTank;
+    }
+
+    public Bullet finsBulletByUUID(UUID bulletId) {
+        for (int i = 0; i < bullets.size(); i++) {
+            if (bullets.get(i).getId().equals(bulletId))
+                return bullets.get(i);
+        }
+
+        return null;
     }
 
     class MyKeyListener extends KeyAdapter {
@@ -139,17 +178,25 @@ public class TankFrame extends Frame {
         }
 
         private void setMainTankDir() {
-            if (!bL && !bR && !bU && !bD) myTank.setMoving(false);
-            else {
-                myTank.setMoving(true);
+            Dir oldDir = myTank.getDir();
+            if (!bL && !bR && !bU && !bD) {
+                myTank.setMoving(false);
+                Client.INSTANCE.send(new TankStopMsg(myTank));
+            } else {
                 if (bL) myTank.setDir(Dir.LEFT);
                 if (bU) myTank.setDir(Dir.UP);
                 if (bD) myTank.setDir(Dir.DOWN);
                 if (bR) myTank.setDir(Dir.RIGHT);
+                //发出坦克移动的消息
+                if (!myTank.isMoving())
+                    Client.INSTANCE.send(new TankStartMovingMsg(myTank));
+
+                myTank.setMoving(true);
+
+                if (oldDir != myTank.getDir()) Client.INSTANCE.send(new TankDirChangedMsg(myTank));
             }
         }
     }
-
 
 
 }

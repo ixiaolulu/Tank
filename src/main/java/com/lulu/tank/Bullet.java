@@ -1,6 +1,10 @@
 package com.lulu.tank;
 
+import com.lulu.tank.net.Client;
+import com.lulu.tank.net.TankDieMsg;
+
 import java.awt.*;
+import java.util.UUID;
 
 /**
  * @Description:
@@ -18,6 +22,9 @@ public class Bullet {
 
     private Dir dir;
 
+    private UUID id = UUID.randomUUID();
+    private UUID playerId;
+
     private boolean moving = false;
 
     private boolean living = true;
@@ -29,7 +36,8 @@ public class Bullet {
     Rectangle rect = new Rectangle();
 
 
-    public Bullet(int x, int y, Dir dir, Group group, TankFrame tf) {
+    public Bullet(UUID playerId, int x, int y, Dir dir, Group group, TankFrame tf) {
+        this.playerId = playerId;
         this.x = x;
         this.y = y;
         this.dir = dir;
@@ -89,18 +97,19 @@ public class Bullet {
     }
 
     public void collideWith(Tank tank) {
-        if (tank.getGroup() == this.group) return;
-        Rectangle rectTank = new Rectangle(tank.getX(), tank.getY(), Tank.WIDTH, Tank.HEIGHT);
-        if (this.rect.intersects(tank.rect)) {
+        if (this.playerId.equals(tank.getId())) return;
+
+        if (this.living && tank.isLiving() && this.rect.intersects(tank.rect)) {
             tank.die();
             this.die();
-            int eX = tank.getX() + Tank.WIDTH / 2 - Explode.WIDTH / 2;
-            int eY = tank.getY() + Tank.HEIGHT / 2 - Explode.HEIGHT / 2;
-            tf.explodes.add(new Explode(eX, eY, tf));
+//            int eX = tank.getX() + Tank.WIDTH / 2 - Explode.WIDTH / 2;
+//            int eY = tank.getY() + Tank.HEIGHT / 2 - Explode.HEIGHT / 2;
+//            tf.explodes.add(new Explode(eX, eY, tf));
+            Client.INSTANCE.send(new TankDieMsg(tank.getId(), this.id));
         }
     }
 
-    private void die() {
+    public void die() {
         this.living = false;
     }
 
@@ -150,5 +159,21 @@ public class Bullet {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(UUID playerId) {
+        this.playerId = playerId;
     }
 }
