@@ -51,7 +51,7 @@ public class BulletNewMsg extends Msg {
     public void handle() {
         if (this.playerId.equals(TankFrame.INSTANCE.getMainTank().getId())) return;
 
-        Bullet bullet = new Bullet(this.playerId, x, y, dir, group, TankFrame.INSTANCE);
+        Bullet bullet = new Bullet(this.playerId, x, y, dir, group);
         bullet.setId(this.id);
         TankFrame.INSTANCE.addBullet(bullet);
 

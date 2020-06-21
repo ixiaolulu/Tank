@@ -30,7 +30,7 @@ public class TankFrame extends Frame {
     static final int GAME_WIDTH = 800, GAME_HEIGHT = 600;
     Random r = new Random();
 
-    Tank myTank = new Tank(r.nextInt(GAME_WIDTH), r.nextInt(GAME_HEIGHT), Dir.DOWN, Group.GOOD, this);
+    Tank myTank = new Tank(r.nextInt(GAME_WIDTH), r.nextInt(GAME_HEIGHT), Dir.DOWN, Group.GOOD);
     List<Explode> explodes = new ArrayList<>();
 
     List<Bullet> bullets = new ArrayList<>();
@@ -73,7 +73,9 @@ public class TankFrame extends Frame {
         g.drawString("敌人的数量：" + tanks.size(), 10, 80);
         g.drawString("爆炸的数量：" + explodes.size(), 10, 100);
         g.setColor(c);
-        myTank.paint(g);
+        if (myTank != null) {
+            myTank.paint(g);
+        }
 
         for (int i = 0; i < bullets.size(); i++) {
             bullets.get(i).paint(g);

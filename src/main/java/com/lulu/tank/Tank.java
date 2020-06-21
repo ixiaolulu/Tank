@@ -30,20 +30,17 @@ public class Tank {
 
     private UUID id = UUID.randomUUID();
 
-    private TankFrame tf = null;
-
     private Group group = Group.BAD;
 
     private Random random = new Random();
 
     Rectangle rect = new Rectangle();
 
-    public Tank(int x, int y, Dir dir, Group group, TankFrame tf) {
+    public Tank(int x, int y, Dir dir, Group group) {
         this.x = x;
         this.y = y;
         this.dir = dir;
         this.group = group;
-        this.tf = tf;
 
         rect.x = this.x;
         rect.y = this.y;
@@ -66,6 +63,13 @@ public class Tank {
         rect.height = HEIGHT;
     }
 
+    public void die() {
+        this.living = false;
+        int eX = this.getX() + Tank.WIDTH / 2 - Explode.WIDTH / 2;
+        int eY = this.getY() + Tank.HEIGHT / 2 - Explode.HEIGHT / 2;
+        TankFrame.INSTANCE.explodes.add(new Explode(eX, eY));
+    }
+
     public void paint(Graphics g) {
 //        if (!living) tf.tanks.remove(this);
         //uuid on head
@@ -82,6 +86,7 @@ public class Tank {
             g.drawRect(x, y, WIDTH, HEIGHT);
             g.setColor(cc);
             return;
+//            TankFrame.INSTANCE.tanks.remove(this.id);
         }
 
         switch (dir) {
@@ -151,8 +156,8 @@ public class Tank {
         int bX = this.x + Tank.WIDTH / 2 - Bullet.WIDTH / 2;
         int bY = this.y + Tank.HEIGHT / 2 - Bullet.HEIGHT / 2;
 
-        Bullet bullet = new Bullet(this.id, bX, bY, this.dir, this.group, this.tf);
-        tf.bullets.add(bullet);
+        Bullet bullet = new Bullet(this.id, bX, bY, this.dir, this.group);
+        TankFrame.INSTANCE.bullets.add(bullet);
 
         //向服务端发送子弹
         Client.INSTANCE.send(new BulletNewMsg(bullet));
@@ -196,18 +201,6 @@ public class Tank {
         this.moving = moving;
     }
 
-    public TankFrame getTf() {
-        return tf;
-    }
-
-    public void setTf(TankFrame tf) {
-        this.tf = tf;
-    }
-
-    public void die() {
-        this.living = false;
-    }
-
     public Group getGroup() {
         return group;
     }
@@ -230,5 +223,20 @@ public class Tank {
 
     public void setLiving(boolean living) {
         this.living = living;
+    }
+
+    @Override
+    public String toString() {
+        return "Tank{" +
+                "x=" + x +
+                ", y=" + y +
+                ", dir=" + dir +
+                ", moving=" + moving +
+                ", living=" + living +
+                ", id=" + id +
+                ", group=" + group +
+                ", random=" + random +
+                ", rect=" + rect +
+                '}';
     }
 }

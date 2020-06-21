@@ -29,20 +29,17 @@ public class Bullet {
 
     private boolean living = true;
 
-    private TankFrame tf = null;
-
     private Group group = Group.BAD;
 
     Rectangle rect = new Rectangle();
 
 
-    public Bullet(UUID playerId, int x, int y, Dir dir, Group group, TankFrame tf) {
+    public Bullet(UUID playerId, int x, int y, Dir dir, Group group) {
         this.playerId = playerId;
         this.x = x;
         this.y = y;
         this.dir = dir;
         this.group = group;
-        this.tf = tf;
 
         rect.x = this.x;
         rect.y = this.y;
@@ -52,7 +49,7 @@ public class Bullet {
 
     public void paint(Graphics g) {
         if (!living) {
-            tf.bullets.remove(this);
+            TankFrame.INSTANCE.bullets.remove(this);
         }
         switch (dir) {
             case LEFT:
